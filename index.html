@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+<meta name="theme-color" content="#3B6D11" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<title>JMDFARM — Sistem Penggemukan Sapi</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ===== LOGIN ===== -->
+<div id="login-page">
+  <div class="login-card">
+    <div class="brand">
+      <div class="brand-icon"><i class="ti ti-cow"></i></div>
+      <div>
+        <div class="brand-name">JMDFARM</div>
+        <div class="brand-sub">Sistem Penggemukan Sapi</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Username</label>
+      <input type="text" id="login-user" placeholder="Masukkan username" autocomplete="username" />
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="login-pass" placeholder="Masukkan password" autocomplete="current-password" />
+    </div>
+    <button class="btn-primary" onclick="doLogin()"><i class="ti ti-login"></i> Masuk</button>
+    <div class="err-msg hidden" id="login-err"><i class="ti ti-alert-circle"></i> Username atau password salah</div>
+    <div class="login-hint"><strong>Demo:</strong> admin / admin123 &nbsp;|&nbsp; operator / op123</div>
+  </div>
+</div>
+
+<!-- ===== APP ===== -->
+<div id="app" class="hidden">
+
+  <!-- Overlay untuk tutup sidebar di mobile -->
+  <div id="sidebar-overlay" class="sidebar-overlay hidden" onclick="closeSidebar()"></div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon sm"><i class="ti ti-cow"></i></div>
+      <div>
+        <div class="sidebar-brand-text">JMDFARM</div>
+        <div class="sidebar-brand-sub">Penggemukan Sapi</div>
+      </div>
+      <button class="sidebar-close" onclick="closeSidebar()"><i class="ti ti-x"></i></button>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-item active" onclick="showPage('dashboard')" id="nav-dashboard">
+        <i class="ti ti-dashboard"></i> Dashboard
+      </div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Pencatatan</div>
+      <div class="nav-item" onclick="showPage('sapi-masuk')" id="nav-sapi-masuk">
+        <i class="ti ti-circle-arrow-down-right"></i> Pembelian Sapi
+      </div>
+      <div class="nav-item" onclick="showPage('sapi-keluar')" id="nav-sapi-keluar">
+        <i class="ti ti-circle-arrow-up-right"></i> Penjualan Sapi
+      </div>
+      <div class="nav-item" onclick="showPage('operasional')" id="nav-operasional">
+        <i class="ti ti-shopping-cart"></i> Belanja Operasional
+      </div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Laporan</div>
+      <div class="nav-item" onclick="showPage('laporan')" id="nav-laporan">
+        <i class="ti ti-chart-bar"></i> Laporan Keuangan
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="avatar" id="user-avatar">A</div>
+        <div style="flex:1;min-width:0">
+          <div class="user-name" id="user-display">Admin</div>
+          <button class="logout-btn" onclick="doLogout()"><i class="ti ti-logout"></i> Keluar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="main">
+
+    <!-- TOPBAR (mobile) -->
+    <div class="topbar">
+      <button class="hamburger" onclick="toggleSidebar()"><i class="ti ti-menu-2"></i></button>
+      <div class="topbar-brand"><i class="ti ti-cow"></i> JMDFARM</div>
+      <div class="avatar sm" id="topbar-avatar">A</div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="page-dashboard">
+      <div class="page-header">
+        <div class="page-title">Dashboard</div>
+        <div class="page-date" id="today-date"></div>
+      </div>
+      <div class="page-content">
+        <div class="summary-grid" id="dash-summary"></div>
+        <div class="section-label">Transaksi Terbaru</div>
+        <div class="recent-grid" id="dash-recent"></div>
+      </div>
+    </div>
+
+    <!-- PEMBELIAN SAPI -->
+    <div id="page-sapi-masuk" class="hidden">
+      <div class="page-header">
+        <div class="page-title"><i class="ti ti-circle-arrow-down-right" style="color:#A32D2D"></i> Pembelian Sapi</div>
+        <button class="btn-add" onclick="openModal('sapi-masuk')"><i class="ti ti-plus"></i> <span class="btn-label">Tambah</span></button>
+      </div>
+      <div class="page-content">
+        <div class="table-card">
+          <div class="table-toolbar">
+            <input class="search-input" type="text" placeholder="Cari..." oninput="renderTable('sapi-masuk',this.value)" />
+            <span class="data-count" id="count-sapi-masuk"></span>
+          </div>
+          <div id="table-sapi-masuk"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PENJUALAN SAPI -->
+    <div id="page-sapi-keluar" class="hidden">
+      <div class="page-header">
+        <div class="page-title"><i class="ti ti-circle-arrow-up-right" style="color:#27500A"></i> Penjualan Sapi</div>
+        <button class="btn-add" onclick="openModal('sapi-keluar')"><i class="ti ti-plus"></i> <span class="btn-label">Tambah</span></button>
+      </div>
+      <div class="page-content">
+        <div class="table-card">
+          <div class="table-toolbar">
+            <input class="search-input" type="text" placeholder="Cari nama / pembeli..." oninput="renderTable('sapi-keluar',this.value)" />
+            <span class="data-count" id="count-sapi-keluar"></span>
+          </div>
+          <div id="table-sapi-keluar"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OPERASIONAL -->
+    <div id="page-operasional" class="hidden">
+      <div class="page-header">
+        <div class="page-title"><i class="ti ti-shopping-cart" style="color:#854F0B"></i> Belanja Operasional</div>
+        <button class="btn-add" onclick="openModal('operasional')"><i class="ti ti-plus"></i> <span class="btn-label">Tambah</span></button>
+      </div>
+      <div class="page-content">
+        <div class="table-card">
+          <div class="table-toolbar">
+            <input class="search-input" type="text" placeholder="Cari..." oninput="renderTable('operasional',this.value)" />
+            <span class="data-count" id="count-operasional"></span>
+          </div>
+          <div id="table-operasional"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LAPORAN -->
+    <div id="page-laporan" class="hidden">
+      <div class="page-header">
+        <div class="page-title"><i class="ti ti-chart-bar" style="color:#185FA5"></i> Laporan Keuangan</div>
+      </div>
+
+      <div id="print-header">
+        <div class="print-logo">🐄 JMDFARM</div>
+        <div class="print-title">Laporan Keuangan</div>
+        <div class="print-meta">Periode: <strong id="print-year-label"></strong> · Dicetak: <span id="print-date-label"></span></div>
+      </div>
+
+      <div class="lap-toolbar">
+        <span class="filter-label">Filter Tahun:</span>
+        <div class="year-btns">
+          <button class="year-btn" onclick="setYear(2024)" id="yr-2024">2024</button>
+          <button class="year-btn active" onclick="setYear(2025)" id="yr-2025">2025</button>
+          <button class="year-btn" onclick="setYear(2026)" id="yr-2026">2026</button>
+          <button class="year-btn" onclick="setYear(2027)" id="yr-2027">2027</button>
+          <button class="year-btn" onclick="setYear('semua')" id="yr-semua">Semua</button>
+        </div>
+        <button class="btn-pdf" onclick="doPrint()"><i class="ti ti-printer"></i> Cetak / PDF</button>
+      </div>
+
+      <div class="page-content">
+        <div class="summary-grid" id="lap-summary"></div>
+        <div class="lap-two-col">
+          <div class="lap-section">
+            <div class="lap-section-title"><i class="ti ti-circle-arrow-down-right" style="color:#A32D2D"></i> Pembelian Sapi</div>
+            <div class="table-card"><div id="lap-table-sm"></div></div>
+          </div>
+          <div class="lap-section">
+            <div class="lap-section-title"><i class="ti ti-circle-arrow-up-right" style="color:#27500A"></i> Penjualan Sapi</div>
+            <div class="table-card"><div id="lap-table-sk"></div></div>
+          </div>
+        </div>
+        <div class="lap-section" style="margin-top:1rem">
+          <div class="lap-section-title"><i class="ti ti-shopping-cart" style="color:#854F0B"></i> Belanja Operasional</div>
+          <div class="table-card"><div id="lap-table-op"></div></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+
+  <!-- BOTTOM NAV (mobile only) -->
+  <nav class="bottom-nav">
+    <button class="bnav-item active" id="bnav-dashboard" onclick="showPage('dashboard')">
+      <i class="ti ti-dashboard"></i><span>Home</span>
+    </button>
+    <button class="bnav-item" id="bnav-sapi-masuk" onclick="showPage('sapi-masuk')">
+      <i class="ti ti-circle-arrow-down-right"></i><span>Beli</span>
+    </button>
+    <button class="bnav-item" id="bnav-sapi-keluar" onclick="showPage('sapi-keluar')">
+      <i class="ti ti-circle-arrow-up-right"></i><span>Jual</span>
+    </button>
+    <button class="bnav-item" id="bnav-operasional" onclick="showPage('operasional')">
+      <i class="ti ti-shopping-cart"></i><span>Ops</span>
+    </button>
+    <button class="bnav-item" id="bnav-laporan" onclick="showPage('laporan')">
+      <i class="ti ti-chart-bar"></i><span>Laporan</span>
+    </button>
+  </nav>
+
+</div><!-- /app -->
+
+<!-- MODAL -->
+<div class="modal-overlay hidden" id="modal-overlay" onclick="handleOverlayClick(event)">
+  <div class="modal" id="modal-box">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">Tambah Data</div>
+      <button class="modal-close" onclick="closeModal()"><i class="ti ti-x"></i></button>
+    </div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
